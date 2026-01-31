@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { PERSONAL_INFO } from '../constants';
+import { PERSONAL_INFO } from '../data/constants';
 import { Github, Linkedin, Mail, Phone, Copy, Check, Fingerprint, Shield, Cpu, X, ScanLine, Maximize2, Twitter } from 'lucide-react';
 
 const Contact: React.FC = () => {

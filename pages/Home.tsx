@@ -1,7 +1,7 @@
 import React from 'react';
 import SystemStatus from '../components/SystemStatus';
 import Terminal from '../components/Terminal';
-import { PERSONAL_INFO } from '../constants';
+import { PERSONAL_INFO } from '../data/constants';
 import { ArrowRight, Terminal as TerminalIcon, Zap, Layers } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

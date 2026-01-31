@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Gamepad2, Timer, Grid, ArrowLeft, Play, RotateCcw, Keyboard, Bug, Trophy, AlertCircle } from 'lucide-react';
-import { PERSONAL_INFO, ACHIEVEMENTS } from '../constants';
+import React, { useState, useEffect, useRef } from 'react';
+import { Gamepad2, Timer, Grid, ArrowLeft, Play, RotateCcw, Bug } from 'lucide-react';
+import { PERSONAL_INFO } from '../data/constants';
 
 // --- GAME 1: MEMORY MATCH ---
 const ICONS = ['⚛️', '🐍', '🚀', '💻', '🎨', '🎮', '💾', '🔋'];
@@ -211,194 +211,7 @@ const ReflexTest: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   );
 };
 
-// --- GAME 3: SPEED TYPER ---
-
-const SpeedTyper: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  // Construct the text from constants
-  const targetText = useMemo(() => {
-    return `I am ${PERSONAL_INFO.name}, a ${PERSONAL_INFO.role} from ${PERSONAL_INFO.location}. ${PERSONAL_INFO.bio} I have ranked 489 worldwide in LeetCode Biweekly Contest 148, achieving a max rating of 1804. I was also a top 5 finalist in the Rabbit AI Hiring Show Hackathon. I love solving problems and building scalable distributed systems.`;
-  }, []);
-
-  const [userInput, setUserInput] = useState('');
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [endTime, setEndTime] = useState<number | null>(null);
-  const [wpm, setWpm] = useState(0);
-  const [accuracy, setAccuracy] = useState(100);
-  const [isFocused, setIsFocused] = useState(true);
-  
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [timer, setTimer] = useState(0);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-    const interval = setInterval(() => {
-        if (startTime && !endTime) {
-            setTimer(prev => prev + 0.1);
-        }
-    }, 100);
-    return () => clearInterval(interval);
-  }, [startTime, endTime]);
-
-  const resetGame = () => {
-      setUserInput('');
-      setStartTime(null);
-      setEndTime(null);
-      setTimer(0);
-      setWpm(0);
-      setAccuracy(100);
-      setTimeout(() => inputRef.current?.focus(), 50);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (e.key === 'Tab') {
-          e.preventDefault();
-          resetGame();
-      }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      if (endTime) return; // Game over
-
-      const val = e.target.value;
-      if (!startTime) setStartTime(Date.now());
-
-      setUserInput(val);
-
-      // Check completion
-      if (val.length >= targetText.length) {
-          const end = Date.now();
-          setEndTime(end);
-          
-          // Calculate stats
-          const timeInMinutes = (end - (startTime || Date.now())) / 60000;
-          const words = targetText.length / 5;
-          const calculatedWpm = Math.round(words / timeInMinutes);
-          
-          // Calculate accuracy
-          let errors = 0;
-          for (let i = 0; i < targetText.length; i++) {
-              if (val[i] !== targetText[i]) errors++;
-          }
-          const acc = Math.max(0, Math.round(((targetText.length - errors) / targetText.length) * 100));
-          
-          setWpm(calculatedWpm);
-          setAccuracy(acc);
-      }
-  };
-
-  // Render text with highlighting
-  const renderText = () => {
-      return targetText.split('').map((char, index) => {
-          let className = "text-zinc-600"; // Default / Untyped
-          
-          if (index < userInput.length) {
-              const userChar = userInput[index];
-              if (userChar === char) {
-                  className = "text-zinc-100"; // Correct
-              } else {
-                  className = "text-red-500 bg-red-500/10"; // Incorrect
-              }
-          }
-          
-          // Cursor block
-          if (index === userInput.length) {
-               return <span key={index} className="border-l-2 border-indigo-500 animate-pulse bg-indigo-500/20 text-zinc-200">{char}</span>;
-          }
-
-          return <span key={index} className={className}>{char}</span>;
-      });
-  };
-
-  return (
-    <div className="animate-fade-in-up">
-        <div className="flex items-center justify-between mb-8">
-            <button onClick={onBack} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-            <ArrowLeft size={18} /> Back
-            </button>
-            <div className="flex items-center gap-6 font-mono text-sm">
-                <div className="flex items-center gap-2 text-zinc-400">
-                    <Keyboard size={14} /> 
-                    <span className="hidden sm:inline">TAB to restart</span>
-                </div>
-                <div className="text-indigo-400 font-bold text-xl">
-                    {timer.toFixed(1)}s
-                </div>
-            </div>
-        </div>
-
-        <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-            <div 
-                className={`relative w-full bg-surface border rounded-2xl p-8 shadow-xl transition-colors ${isFocused ? 'border-zinc-700' : 'border-zinc-800 opacity-80'}`}
-                onClick={() => inputRef.current?.focus()}
-            >
-                {endTime ? (
-                    <div className="text-center py-8 animate-fade-in-up">
-                        <div className="inline-flex p-4 rounded-full bg-amber-500/10 text-amber-500 mb-6">
-                            <Trophy size={48} />
-                        </div>
-                        <div className="grid grid-cols-2 gap-8 mb-8 max-w-sm mx-auto">
-                            <div className="flex flex-col">
-                                <span className="text-4xl font-bold text-white">{wpm}</span>
-                                <span className="text-zinc-500 text-xs uppercase tracking-widest">WPM</span>
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-4xl font-bold text-white">{accuracy}%</span>
-                                <span className="text-zinc-500 text-xs uppercase tracking-widest">Accuracy</span>
-                            </div>
-                        </div>
-                        <p className="text-zinc-400 mb-8 max-w-md mx-auto">
-                            Great job! You've successfully typed out my career highlights.
-                        </p>
-                        <button 
-                            onClick={resetGame}
-                            className="px-8 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg font-medium transition-colors inline-flex items-center gap-2"
-                        >
-                            <RotateCcw size={18} /> Try Again
-                        </button>
-                    </div>
-                ) : (
-                    <>
-                        {/* Hidden Input for handling typing */}
-                        <textarea 
-                            ref={inputRef}
-                            value={userInput}
-                            onChange={handleChange}
-                            onKeyDown={handleKeyDown}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
-                            className="absolute opacity-0 inset-0 w-full h-full cursor-default -z-10"
-                            autoComplete="off"
-                            spellCheck="false"
-                        />
-                        
-                        {!isFocused && !endTime && (
-                             <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[1px] rounded-2xl z-10 cursor-pointer">
-                                 <span className="flex items-center gap-2 text-white font-bold text-lg">
-                                     <Play size={20} className="fill-current" /> Click to Focus
-                                 </span>
-                             </div>
-                        )}
-
-                        <div className="font-mono text-lg md:text-xl leading-relaxed break-words whitespace-pre-wrap select-none">
-                            {renderText()}
-                        </div>
-                    </>
-                )}
-            </div>
-            
-            <div className="mt-6 flex flex-col items-center gap-2 text-zinc-500 text-xs">
-                <p>Type the text above as fast as you can.</p>
-                <div className="flex gap-4">
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 bg-zinc-100 rounded-full"></span> Correct</span>
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 bg-red-500 rounded-full"></span> Error</span>
-                </div>
-            </div>
-        </div>
-    </div>
-  )
-}
-
-// --- GAME 4: WHACK-A-BUG ---
+// --- GAME 3: WHACK-A-BUG ---
 const WhackABug: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const [grid, setGrid] = useState(Array(9).fill(false));
     const [score, setScore] = useState(0);
@@ -552,11 +365,10 @@ const WhackABug: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 // --- MAIN PAGE COMPONENT ---
 
 const Games: React.FC = () => {
-  const [activeGame, setActiveGame] = useState<'memory' | 'reflex' | 'typer' | 'whack' | null>(null);
+  const [activeGame, setActiveGame] = useState<'memory' | 'reflex' | 'whack' | null>(null);
 
   if (activeGame === 'memory') return <MemoryMatch onBack={() => setActiveGame(null)} />;
   if (activeGame === 'reflex') return <ReflexTest onBack={() => setActiveGame(null)} />;
-  if (activeGame === 'typer') return <SpeedTyper onBack={() => setActiveGame(null)} />;
   if (activeGame === 'whack') return <WhackABug onBack={() => setActiveGame(null)} />;
 
   return (
@@ -601,26 +413,6 @@ const Games: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Reflex Test</h3>
                 <p className="text-sm text-zinc-400">How fast can you click? Measure your reaction time in milliseconds.</p>
-            </div>
-            
-            <div className="relative z-10 flex items-center gap-2 text-sm font-medium text-zinc-500 group-hover:text-white transition-colors">
-                <Play size={14} className="fill-current" /> Play Now
-            </div>
-        </div>
-
-        {/* Speed Typer Card */}
-        <div 
-            onClick={() => setActiveGame('typer')}
-            className="group relative h-64 bg-surface border border-zinc-800 rounded-2xl p-8 hover:border-zinc-600 transition-all cursor-pointer overflow-hidden flex flex-col justify-between"
-        >
-            <div className="absolute top-0 right-0 p-32 bg-amber-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-amber-500/20 transition-colors"></div>
-            
-            <div className="relative z-10">
-                <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-amber-400 mb-4 border border-zinc-800 group-hover:scale-110 transition-transform">
-                    <Keyboard size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Portfolio Typer</h3>
-                <p className="text-sm text-zinc-400">Type through my achievements. Test your speed and learn about me.</p>
             </div>
             
             <div className="relative z-10 flex items-center gap-2 text-sm font-medium text-zinc-500 group-hover:text-white transition-colors">

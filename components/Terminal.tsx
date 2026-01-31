@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { PERSONAL_INFO, SKILLS, EXPERIENCE, PROJECTS } from "../constants";
-import { Terminal as TerminalIcon } from "lucide-react";
+import { PERSONAL_INFO, SKILLS, EXPERIENCE, PROJECTS } from "../data/constants";
+import { Terminal as TerminalIcon, ExternalLink } from "lucide-react";
 
 interface CommandHistory {
   type: "command" | "output";
@@ -111,11 +111,10 @@ const ExternalLinkLoader: React.FC<ExternalLinkLoaderProps> = ({
       if (onSuccess) onSuccess();
     }, 1200);
 
-    // 3. Open Phase
+    // 3. Done Phase (Show link)
     const t2 = setTimeout(() => {
-      window.open(url, "_blank");
       setStage("done");
-    }, 1800); // 600ms after success to let the user see the "Access Granted" effect
+    }, 1800);
 
     return () => {
       clearTimeout(t1);
@@ -124,9 +123,7 @@ const ExternalLinkLoader: React.FC<ExternalLinkLoaderProps> = ({
   }, []);
 
   return (
-    <div
-      className={`space-y-2 font-mono ${stage === "done" ? "opacity-50" : ""}`}
-    >
+    <div className={`space-y-2 font-mono`}>
       <div className="flex items-center gap-2">
         <span className="text-zinc-500 text-xs">Target:</span>
         <span
@@ -158,17 +155,25 @@ const ExternalLinkLoader: React.FC<ExternalLinkLoaderProps> = ({
       <div className="flex flex-col text-[10px] text-zinc-500 font-mono h-8 justify-end">
         {stage === "loading" && (
           <>
-            <span>{">"} Resolving DNS...</span>
-            <span className="animate-pulse">{">"} Handshaking...</span>
+            <span>&gt; Resolving DNS...</span>
+            <span className="animate-pulse">&gt; Handshaking...</span>
           </>
         )}
         {stage === "success" && (
           <span className="text-emerald-400 font-bold animate-pulse">
-            {">"} UPLINK ESTABLISHED.
+            &gt; UPLINK ESTABLISHED.
           </span>
         )}
         {stage === "done" && (
-          <span className="text-zinc-600">{">"} Transfer complete.</span>
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 text-emerald-400 font-bold hover:underline cursor-pointer bg-zinc-900/50 p-1.5 rounded border border-emerald-500/30 w-max mt-1"
+          >
+            <span>&gt; CLICK TO OPEN LINK</span>
+            <ExternalLink size={12} />
+          </a>
         )}
       </div>
     </div>
