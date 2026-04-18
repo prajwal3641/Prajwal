@@ -16,6 +16,12 @@ export interface Education {
   location: string;
 }
 
+export interface ProjectTimeline {
+  date: string;
+  title: string;
+  description: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -24,6 +30,8 @@ export interface Project {
   link?: string;
   github?: string;
   icon?: string; 
+  previewImage?: string;
+  timeline?: ProjectTimeline[];
 }
 
 export interface SkillCategory {

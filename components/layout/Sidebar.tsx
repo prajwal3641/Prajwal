@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Home, User, FolderGit2, X, Gamepad2, Fingerprint } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { PERSONAL_INFO } from '../../data/constants';
 
 interface SidebarProps {
@@ -11,17 +12,36 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
+  const [showProfileZoom, setShowProfileZoom] = useState(false);
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: User, label: "Resume", path: "/resume" },
     { icon: FolderGit2, label: "Projects", path: "/projects" },
     { icon: Gamepad2, label: "Games", path: "/games" },
-    { icon: Fingerprint, label: "Contact", path: "/contact" },
   ];
 
   return (
     <>
+      {/* Profile Zoom Modal */}
+      {showProfileZoom && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in"
+          onClick={() => setShowProfileZoom(false)}
+        >
+          <button 
+              onClick={(e) => { e.stopPropagation(); setShowProfileZoom(false); }}
+              className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 rounded-full bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors border border-zinc-700 z-50"
+          >
+              <X size={24} />
+          </button>
+          <div className="relative max-w-2xl w-full aspect-square rounded-3xl overflow-hidden border-4 border-zinc-800 shadow-[0_0_100px_rgba(99,102,241,0.2)]" onClick={e => e.stopPropagation()}>
+             <img src={PERSONAL_INFO.avatar} alt="Enlarged Profile" className="w-full h-full object-cover" />
+          </div>
+        </div>,
+        document.body
+      )}
+
       {/* Mobile Backdrop */}
       {isOpen && (
         <div 
@@ -42,16 +62,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         
         {/* Logo Area */}
         <div className="flex items-center justify-between w-full px-6 md:px-0 md:justify-center mb-4 pt-2">
-          <Link to="/" className="relative group cursor-pointer block" onClick={onClose}>
+          <button onClick={() => setShowProfileZoom(true)} className="relative group cursor-zoom-in block outline-none">
             {/* Animated Glow Background - Cyberpunk Style */}
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500 rounded-2xl blur opacity-25 group-hover:opacity-100 transition duration-500 group-hover:duration-200 animate-tilt"></div>
             
             {/* Main Icon Container */}
-            <div className="relative w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-800/50 overflow-hidden shadow-2xl">
+            <div className="relative w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-800/50 overflow-hidden shadow-2xl transition-transform group-hover:scale-105">
                 <img 
                    src={PERSONAL_INFO.avatar}
                    alt="Profile" 
-                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500 bg-indigo-900/20"
+                   className="w-full h-full object-cover bg-indigo-900/20"
                 />
             </div>
 
@@ -62,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 </span>
             </div>
-          </Link>
+          </button>
           
           {/* Close button only on mobile */}
           <button onClick={onClose} className="md:hidden text-zinc-400 hover:text-white">

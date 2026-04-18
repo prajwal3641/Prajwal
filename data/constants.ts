@@ -1,4 +1,5 @@
 import { Experience, Education, Project, SkillCategory, Achievement, Certification } from '../types/index';
+import avatarImg from '../IMG_0610.JPG';
 
 export const PERSONAL_INFO = {
   name: "Prajwal Rode",
@@ -11,7 +12,7 @@ export const PERSONAL_INFO = {
   leetcode: "https://leetcode.com/u/Wayne_05/",
   twitter: "https://x.com/0xPrajwal_",
   bio: "I love backend engineering and distributed systems. Passionate about building scalable applications and optimizing performance.",
-  avatar: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM2MzY2ZjE7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM0MzM4Y2E7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0idXJsKCNncmFkKSIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjkwIiByPSI1MCIgZmlsbD0iI2ZmZWRkNSIvPjxwYXRoIGQ9Ik01MCw5MCBRNTAsNDAgMTAwLDQwIFExNTAsNDAgMTUwLDkwIiBmaWxsPSIjMWUxZTFlIi8+PGcgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiPjxjaXJjbGUgY3g9IjgwIiBjeT0iOTUiIHI9IjEyIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjgiLz48Y2lyY2xlIGN4PSIxMjAiIGN5PSI5NSIgcj0iMTIiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuOCIvPjxsaW5lIHgxPSI5MiIgeTE9Ijk1IiB4Mj0iMTA4IiB5Mj0iOTUiLz48L2c+PHBhdGggZD0iTTg1IDEyMCBRMTAwIDEzMCAxMTUgMTIwIiBzdHJva2U9IiMxZTFlMWUiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik01MCAyMDAgUTEwMCAxNjAgMTUwIDIwMCBMMTUwIDIyMCBMNTAgMjIwIFoiIGZpbGw9IiMxZTFlMWUiLz48L3N2Zz4="
+  avatar: avatarImg
 };
 
 export const EXPERIENCE: Experience[] = [
@@ -55,6 +56,30 @@ export const EDUCATION: Education[] = [
 
 export const PROJECTS: Project[] = [
   {
+    id: "proj2",
+    title: "intervie.co",
+    description: [
+      "Built a real-time peer-to-peer mock interview platform matching candidates based on skills and availability.",
+      "Implemented live interviews and mock Group Discussions (2–5 participants) using WebRTC.",
+      "Added a smart AI-driven feedback system analyzing voice, transcripts, and code."
+    ],
+    tech: ["React", "Node.js", "WebRTC", "Socket.io", "AI"],
+    link: "https://intervie.co",
+    icon: "video",
+    previewImage: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2000&auto=format&fit=crop",
+    timeline: [
+        { date: "Jan 26, 2026", title: "Project Started", description: "Began conceptualizing the core idea for intervie.co." },
+        { date: "Jan 30, 2026", title: "Market Research", description: "Analyzed existing mock interview platforms and gathered user requirements." },
+        { date: "Feb 2, 2026", title: "Schema Design", description: "Designed the foundational database schema and data models." },
+        { date: "Feb 3, 2026", title: "APIs Design (v1)", description: "Drafted the initial version of the core backend APIs." },
+        { date: "Feb 10, 2026", title: "Frontend Pages Design", description: "Completed UI/UX design and began building the React frontend." },
+        { date: "Feb 18, 2026", title: "Basic MVP Done", description: "Minimum Viable Product was fully functional with core mock interview flows." },
+        { date: "Feb 28, 2026", title: "Auth & Deploy", description: "Implemented secure authentication and deployed the application to production." },
+        { date: "Mar 5, 2026", title: "Domain Live", description: "Purchased the official domain and went live to the public!" },
+        { date: "Mar 10, 2026", title: "20+ Active Users", description: "Crossed our first major milestone with over 20 active users on the platform." }
+    ]
+  },
+  {
     id: "proj1",
     title: "Microservice Mania: Distributed System",
     description: [
@@ -63,19 +88,13 @@ export const PROJECTS: Project[] = [
     ],
     tech: ["Spring Cloud", "Eureka", "Resilience4J", "Zipkin", "Grafana"],
     github: "https://github.com",
-    icon: "server"
-  },
-  {
-    id: "proj2",
-    title: "Intervie – Peer-to-Peer Mock Interview",
-    description: [
-      "Built a real-time peer-to-peer mock interview platform matching candidates based on skills and availability.",
-      "Implemented live interviews and mock Group Discussions (2–5 participants) using WebRTC.",
-      "Added a smart AI-driven feedback system analyzing voice, transcripts, and code."
-    ],
-    tech: ["React", "Node.js", "WebRTC", "Socket.io", "AI"],
-    link: "https://demo.com",
-    icon: "video"
+    icon: "server",
+    previewImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2000&auto=format&fit=crop",
+    timeline: [
+        { date: "Mar 2023", title: "Architecture Design", description: "Finalized the microservices architecture using Spring Cloud components." },
+        { date: "May 2023", title: "Service Discovery via Eureka", description: "Implemented Eureka for dynamic scaling and service discovery." },
+        { date: "Jul 2023", title: "Tracing & Metrics", description: "Added Zipkin and Sleuth for distributed event tracing, Prometheus and Grafana for metrics visualization." },
+    ]
   }
 ];
 
@@ -86,7 +105,7 @@ export const SKILLS: SkillCategory[] = [
   },
   {
     category: "Technologies",
-    items: ["Spring Boot", "Spring Cloud", "Spring Security", "React", "Angular", "Node.js", "PostgreSQL", "MongoDB", "Redis", "Microservices", "Docker", "Kubernetes", "AWS", "WebRTC", "Generative AI"]
+    items: ["Spring Boot", "Node.js", "React", "Angular", "Agentic AI", "n8n", "PostgreSQL", "MongoDB", "Docker", "AWS", "Kubernetes"]
   },
   {
     category: "Tools",

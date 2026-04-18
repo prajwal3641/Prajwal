@@ -209,7 +209,6 @@ const Terminal: React.FC = () => {
     "skills",
     "experience",
     "projects",
-    "contact",
     "email",
     "clear",
     "github",
@@ -225,8 +224,7 @@ const Terminal: React.FC = () => {
     about: "skills",
     skills: "projects",
     projects: "experience",
-    experience: "contact",
-    contact: "email",
+    experience: "email",
     email: "linkedin",
     linkedin: "github",
     github: "leetcode",
@@ -376,25 +374,6 @@ const Terminal: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          );
-          break;
-        case "contact":
-          output = (
-            <div className="space-y-1">
-              <p>
-                Email:{" "}
-                <a
-                  href={`mailto:${PERSONAL_INFO.email}`}
-                  className="text-zinc-300 hover:underline"
-                >
-                  {PERSONAL_INFO.email}
-                </a>
-              </p>
-              <p>
-                Phone:{" "}
-                <span className="text-zinc-400">{PERSONAL_INFO.phone}</span>
-              </p>
             </div>
           );
           break;
@@ -553,7 +532,7 @@ const Terminal: React.FC = () => {
       `}</style>
 
       <div
-        className={`w-full max-w-2xl mx-auto my-12 rounded-xl bg-[#0f0f11] border overflow-hidden shadow-xl font-mono text-sm transition-all duration-100 
+        className={`w-full max-w-4xl mx-auto my-12 rounded-xl bg-[#0f0f11] border overflow-hidden shadow-xl font-mono text-sm transition-all duration-100 
           ${isShaking ? "animate-subtle-shake" : ""} 
           ${isErrorShake ? "animate-error-shake border-red-500/50" : "border-zinc-800"}
           ${isSuccessFlash ? "border-emerald-500 shadow-md" : ""}
@@ -578,7 +557,7 @@ const Terminal: React.FC = () => {
         {/* Terminal Body */}
         <div
           ref={scrollContainerRef}
-          className="h-80 overflow-y-auto p-4 space-y-2 scrollbar-hide cursor-text"
+          className="h-[400px] overflow-y-auto p-4 space-y-2 scrollbar-hide cursor-text"
           onClick={() => inputRef.current?.focus()}
         >
           {history.map((entry, idx) => (

@@ -7,7 +7,6 @@ import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Resume from './pages/Resume';
 import Games from './pages/Games';
-import Contact from './pages/Contact';
 
 const App: React.FC = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -24,7 +23,6 @@ const App: React.FC = () => {
             <Route path="/projects" element={<Projects />} />
             <Route path="/resume" element={<Resume />} />
             <Route path="/games" element={<Games />} />
-            <Route path="/contact" element={<Contact />} />
           </Routes>
         </Layout>
       </HashRouter>
