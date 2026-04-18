@@ -139,13 +139,14 @@ const Home: React.FC = () => {
          <SystemStatus />
       </div>
       {showSnackbar && (
-        <div className="fixed bottom-12 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-zinc-900/95 backdrop-blur-xl border border-zinc-700 p-6 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] z-[100] animate-fade-in-up flex items-start gap-4 ring-1 ring-white/10">
-           {/* Notification highlight styling */}
-           <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-70"></div>
-           
-           <div className="mt-1 flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-               <Zap size={20} />
-           </div>
+        <div className="fixed inset-x-0 bottom-6 md:bottom-12 z-[100] flex justify-center px-4 md:px-0 animate-fade-in-up pointer-events-none">
+          <div className="w-full max-w-md bg-zinc-900/95 backdrop-blur-xl border border-zinc-700 p-6 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] flex items-start gap-4 ring-1 ring-white/10 pointer-events-auto relative">
+             {/* Notification highlight styling */}
+             <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-70"></div>
+             
+             <div className="mt-1 flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                 <Zap size={20} />
+             </div>
            <div className="flex-1 pr-6">
                <h4 className="text-zinc-100 font-bold text-sm mb-1">Open to Freelance</h4>
                <p className="text-zinc-400 text-xs leading-relaxed mb-4">
@@ -165,6 +166,7 @@ const Home: React.FC = () => {
            <button onClick={() => setShowSnackbar(false)} className="absolute top-4 right-4 text-zinc-600 hover:text-zinc-300 transition-colors">
               <X size={16} />
            </button>
+          </div>
         </div>
       )}
 
