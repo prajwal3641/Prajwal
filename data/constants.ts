@@ -6,7 +6,6 @@ export const PERSONAL_INFO = {
   role: "Product Developer",
   location: "Pune, Maharashtra, India",
   email: "prajwalrode31@gmail.com",
-  phone: "+91-9130148301",
   linkedin: "https://www.linkedin.com/in/prajwal-rode-a8858b229/",
   github: "https://github.com/prajwal3641",
   leetcode: "https://leetcode.com/u/Wayne_05/",

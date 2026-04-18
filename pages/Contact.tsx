@@ -22,7 +22,6 @@ VERSION:3.0
 FN:${PERSONAL_INFO.name}
 N:${PERSONAL_INFO.name};;;;
 TITLE:${PERSONAL_INFO.role}
-TEL:${PERSONAL_INFO.phone}
 EMAIL:${PERSONAL_INFO.email}
 URL:${PERSONAL_INFO.linkedin}
 NOTE:${PERSONAL_INFO.bio}
@@ -158,23 +157,7 @@ END:VCARD`;
                                </button>
                           </div>
 
-                          <div className="col-span-2 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800 flex items-center justify-between group/item">
-                               <div className="flex items-center gap-3 overflow-hidden">
-                                   <div className="p-1.5 bg-zinc-800 rounded text-zinc-400">
-                                       <Phone size={14} />
-                                   </div>
-                                   <div className="flex flex-col overflow-hidden">
-                                       <span className="text-[10px] text-zinc-500 uppercase font-bold">Phone</span>
-                                       <span className="text-xs text-zinc-300 truncate font-mono">{PERSONAL_INFO.phone}</span>
-                                   </div>
-                               </div>
-                               <button 
-                                  onClick={(e) => copyToClipboard(PERSONAL_INFO.phone, 'phone', e)}
-                                  className="p-1.5 hover:bg-zinc-800 rounded text-zinc-500 hover:text-white transition-colors"
-                               >
-                                   {copiedField === 'phone' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                               </button>
-                          </div>
+
                       </div>
 
                       {/* Social Icons Row + QR */}

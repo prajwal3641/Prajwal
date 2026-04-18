@@ -67,7 +67,6 @@ const Resume: React.FC = () => {
             {/* Print Only Contact Info */}
             <div className="hidden print:flex print:flex-wrap print:gap-4 print:text-xs print:mt-2 print:text-gray-600">
                 <span>{PERSONAL_INFO.email}</span>
-                <span>{PERSONAL_INFO.phone}</span>
                 <span>{PERSONAL_INFO.linkedin}</span>
                 <span>{PERSONAL_INFO.github}</span>
             </div>
