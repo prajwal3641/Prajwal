@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowUpRight,
@@ -102,6 +102,8 @@ export default function CoffeeStudiosPage() {
   const [activeCategory, setActiveCategory] = useState<MenuCategory>("Classic Drinks");
   const [menuOpen, setMenuOpen] = useState(false);
   const activeItems = menuCategories[activeCategory];
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   /* scroll-based nav frosted glass */
   const { scrollY } = useScroll();
