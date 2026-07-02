@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Server, Database, Cloud, Code2, Trophy, GitBranch } from 'lucide-react';
 import { ACHIEVEMENTS } from '../data/constants';

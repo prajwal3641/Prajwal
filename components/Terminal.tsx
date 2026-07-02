@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useRef, useEffect } from "react";
 import { PERSONAL_INFO, SKILLS, EXPERIENCE, PROJECTS } from "../data/constants";
 import { Terminal as TerminalIcon, ExternalLink } from "lucide-react";

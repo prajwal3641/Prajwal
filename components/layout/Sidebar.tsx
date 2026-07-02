@@ -1,6 +1,9 @@
+'use client';
+
 import React, { useState } from 'react';
-import { Home, User, FolderGit2, X, Gamepad2, Fingerprint } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Home, User, FolderGit2, X, Gamepad2 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import { PERSONAL_INFO } from '../../data/constants';
 
@@ -10,8 +13,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const location = useLocation();
-  const isActive = (path: string) => location.pathname === path;
+  const pathname = usePathname();
+  const isActive = (path: string) => pathname === path;
   const [showProfileZoom, setShowProfileZoom] = useState(false);
 
   const navItems = [
@@ -93,9 +96,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Navigation Items */}
         <div className="flex flex-col gap-4 w-full px-4 md:px-0 md:items-center">
           {navItems.map((item) => (
-            <Link 
-              key={item.path} 
-              to={item.path}
+            <Link
+              key={item.path}
+              href={item.path}
               onClick={onClose}
               className={`group relative flex items-center gap-4 px-4 md:px-0 md:justify-center h-10 rounded-lg transition-all duration-200
                 ${isActive(item.path) 

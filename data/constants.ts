@@ -1,5 +1,6 @@
 import { Experience, Education, Project, SkillCategory, Achievement, Certification } from '../types/index';
-import avatarImg from '../IMG_0610.JPG';
+
+const avatarImg = '/avatar.jpg';
 
 export const PERSONAL_INFO = {
   name: "Prajwal Rode",

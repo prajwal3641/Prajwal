@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Mail, Github, Linkedin, MapPin, Twitter } from 'lucide-react';
 import { PERSONAL_INFO, SKILLS } from '../../data/constants';
