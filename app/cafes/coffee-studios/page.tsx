@@ -1,14 +1,24 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowUpRight,
   Instagram, Facebook, Twitter,
-  MapPin, Phone, Mail, Clock, Star,
+  MapPin, Phone, Mail, Clock,
+  Menu as MenuIcon, X,
 } from "lucide-react";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/cafes/coffee-studios/ui/carousel";
 import { FullMenuDialog } from "@/components/cafes/coffee-studios/FullMenuDialog";
+import { StaggerTestimonials } from "@/components/cafes/coffee-studios/StaggerTestimonials";
+import { CafeLogo } from "@/components/cafes/coffee-studios/CafeLogo";
+import { cafeConfig } from "@/lib/cafes/coffee-studios/config";
+
+/* Lazy — marzipano.js only loads when modal opens */
+const TourModal = dynamic(
+  () => import("@/components/cafes/coffee-studios/tour/TourModal").then((m) => ({ default: m.TourModal })),
+  { ssr: false }
+);
 
 /* ─── Assets ─────────────────────────────────────── */
 const heroSplash  = "/cafes/coffee-studios/assets/hero-splash.png";
@@ -21,7 +31,6 @@ const stepHarvest = "/cafes/coffee-studios/assets/step-harvest.png";
 const stepRoast   = "/cafes/coffee-studios/assets/step-roast.png";
 const stepGrind   = "/cafes/coffee-studios/assets/step-grind.png";
 const stepBrew    = "/cafes/coffee-studios/assets/step-brew.png";
-const logoBadge   = "/cafes/coffee-studios/assets/logo-badge.png";
 const newDrinkImg = "/cafes/coffee-studios/assets/new-drink-iced-latte.png";
 const M = "/cafes/coffee-studios/assets/menu/";
 
@@ -56,7 +65,17 @@ const staggerFast = {
 /* ─── Helpers ────────────────────────────────────── */
 const VP = { once: true, margin: "-80px" } as const;
 
-const navLinks = ["MENU", "ABOUT", "REVIEWS", "GALLERY", "CONTACT"];
+const navLinks = [
+  { label: "MENU",    id: "menu"    },
+  { label: "ABOUT",   id: "about"   },
+  { label: "GALLERY", id: "gallery" },
+  { label: "REVIEWS", id: "reviews" },
+  { label: "CONTACT", id: "contact" },
+];
+
+function scrollTo(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 const menuCategories = {
   "Classic Drinks": [
@@ -101,6 +120,8 @@ export default function CoffeeStudiosPage() {
   const categoryNames = Object.keys(menuCategories) as MenuCategory[];
   const [activeCategory, setActiveCategory] = useState<MenuCategory>("Classic Drinks");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const activeItems = menuCategories[activeCategory];
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -117,54 +138,114 @@ export default function CoffeeStudiosPage() {
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream font-body text-espresso">
-      <div className="mx-auto w-full max-w-[1400px] bg-cream shadow-2xl">
+      <div className="w-full">
 
         {/* ── STICKY NAV ──────────────────────────────── */}
         <div className="sticky top-0 z-50">
-          <motion.div
-            className="absolute inset-0 bg-cream/90 backdrop-blur-md border-b border-espresso/10"
-            style={{ opacity: navBgOpacity }}
-          />
-          <nav className="relative z-10 grid grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-4">
+          <div className="absolute inset-0 bg-cream/95 backdrop-blur-md border-b border-espresso/10" />
+          <nav className="relative z-10 mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3">
+            {/* Logo */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex items-center gap-2"
             >
-              <img src={logoBadge} alt="Artisan Bean" width={816} height={816} className="h-14 w-14 object-contain" />
+              <CafeLogo size={52} showName />
             </motion.div>
 
+            {/* Desktop links */}
             <motion.ul
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
               className="hidden justify-center gap-6 text-sm font-bold tracking-wide text-espresso md:flex lg:gap-10"
             >
-              {navLinks.map((l) => (
+              {navLinks.map(({ label, id }) => (
                 <motion.li
-                  key={l}
+                  key={label}
                   className="cursor-pointer hover:text-mocha relative group"
                   whileHover={{ y: -1 }}
                   transition={{ duration: 0.2 }}
+                  onClick={() => scrollTo(id)}
                 >
-                  {l}
+                  {label}
                   <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-mocha transition-all duration-300 group-hover:w-full" />
                 </motion.li>
               ))}
             </motion.ul>
 
-            <motion.button
+            {/* Desktop CTA buttons */}
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="hidden rounded-full bg-espresso px-5 py-2 text-xs font-semibold tracking-wide text-cream transition hover:bg-mocha md:inline-block"
+              className="hidden items-center gap-2 md:flex"
             >
-              ORDER NOW
-            </motion.button>
+              <motion.button
+                onClick={() => setTourOpen(true)}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                className="flex items-center gap-1.5 rounded-full border border-amber-500/50 bg-amber-400/10 px-4 py-2 text-xs font-semibold tracking-wide text-amber-700 transition hover:bg-amber-400 hover:text-espresso"
+              >
+                <span>⟳</span>
+                View Cafe in 3D
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                className="rounded-full bg-espresso px-5 py-2 text-xs font-semibold tracking-wide text-cream transition hover:bg-mocha"
+              >
+                ORDER NOW
+              </motion.button>
+            </motion.div>
+
+            {/* Mobile: 3D button + hamburger */}
+            <div className="flex items-center gap-2 md:hidden">
+              <button
+                onClick={() => setTourOpen(true)}
+                className="flex items-center gap-1 rounded-full border border-amber-500/50 bg-amber-400/10 px-3 py-1.5 text-[11px] font-semibold text-amber-700"
+              >
+                <span>⟳</span>
+                3D Tour
+              </button>
+              <button
+                onClick={() => setMobileNavOpen((v) => !v)}
+                className="grid h-9 w-9 place-items-center rounded-full border border-espresso/20 bg-cream text-espresso"
+                aria-label="Toggle menu"
+              >
+                {mobileNavOpen ? <X className="h-4 w-4" /> : <MenuIcon className="h-4 w-4" />}
+              </button>
+            </div>
           </nav>
+
+          {/* Mobile drawer */}
+          <motion.div
+            initial={false}
+            animate={{ height: mobileNavOpen ? "auto" : 0, opacity: mobileNavOpen ? 1 : 0 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="relative z-10 overflow-hidden bg-cream/95 backdrop-blur-md md:hidden"
+          >
+            <div className="flex flex-col gap-0 border-t border-espresso/10 px-6 pb-4 pt-2">
+              {navLinks.map(({ label, id }) => (
+                <button
+                  key={label}
+                  onClick={() => {
+                    setMobileNavOpen(false);
+                    setTimeout(() => scrollTo(id), 320);
+                  }}
+                  className="py-3 text-center text-sm font-bold tracking-wide text-espresso hover:text-mocha"
+                >
+                  {label}
+                </button>
+              ))}
+              <button
+                onClick={() => { setMobileNavOpen(false); }}
+                className="mt-3 w-full rounded-full bg-espresso py-2.5 text-xs font-semibold tracking-wide text-cream"
+              >
+                ORDER NOW
+              </button>
+            </div>
+          </motion.div>
         </div>
 
         {/* ── HERO ────────────────────────────────────── */}
@@ -185,7 +266,7 @@ export default function CoffeeStudiosPage() {
             style={{ rotate: 12 }}
           />
 
-          <div className="relative z-10 mt-4 grid grid-cols-1 items-center gap-4 px-6 sm:grid-cols-[1fr_1.3fr] md:gap-10 md:px-12 lg:gap-14 lg:px-20">
+          <div className="relative z-10 mx-auto mt-4 grid w-full max-w-[1440px] grid-cols-1 items-center gap-4 px-6 sm:grid-cols-[1fr_1.3fr] md:gap-10 md:px-12 lg:gap-14 lg:px-20">
             {/* Text */}
             <motion.div
               className="relative z-20 text-center sm:text-left"
@@ -198,7 +279,7 @@ export default function CoffeeStudiosPage() {
                 animate="visible"
                 variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
               >
-                {["Artisan", "Bean", "Coffee Co."].map((word) => (
+                {cafeConfig.heroWords.map((word) => (
                   <motion.span
                     key={word}
                     className="block"
@@ -268,7 +349,7 @@ export default function CoffeeStudiosPage() {
           className="relative z-0 overflow-hidden bg-[#f3c9ce]"
           style={{ paddingInline: "clamp(1.25rem, 4vw, 5rem)", paddingBlock: "clamp(2.5rem, 6vw, 5rem)" }}
         >
-          <div className="grid grid-cols-1 items-center md:grid-cols-[1.2fr_1fr]" style={{ gap: "clamp(1.5rem, 3vw, 3rem)" }}>
+          <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center md:grid-cols-[1.2fr_1fr]" style={{ gap: "clamp(1.5rem, 3vw, 3rem)" }}>
             <motion.div
               className="relative order-1 text-center md:text-left"
               variants={slideLeft}
@@ -335,7 +416,8 @@ export default function CoffeeStudiosPage() {
         </section>
 
         {/* ── SPECIALTIES ─────────────────────────────── */}
-        <section className="relative bg-sand/20 px-6 pb-12 pt-10">
+        <section id="gallery" className="relative bg-sand/20 py-10 pb-12">
+          <div className="mx-auto max-w-[1440px] px-6">
           <motion.img src={beansSmall} alt="" className="pointer-events-none absolute right-4 top-2 w-14 -rotate-12 opacity-70" loading="lazy"
             initial={{ opacity: 0, rotate: -20, x: 20 }}
             whileInView={{ opacity: 0.7, rotate: -12, x: 0 }}
@@ -371,10 +453,12 @@ export default function CoffeeStudiosPage() {
               </motion.div>
             ))}
           </motion.div>
+          </div>
         </section>
 
         {/* ── MENU ────────────────────────────────────── */}
-        <section className="relative bg-cream px-6 pb-16 pt-12 md:px-10 lg:px-14">
+        <section id="menu" className="relative bg-cream py-12 pb-16">
+          <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-14">
           <motion.img src={beansSmall} alt="" className="pointer-events-none absolute left-4 top-4 w-16 -rotate-12 opacity-60" loading="lazy"
             initial={{ opacity: 0 }} whileInView={{ opacity: 0.6 }} viewport={VP}
           />
@@ -448,10 +532,12 @@ export default function CoffeeStudiosPage() {
               </motion.div>
             ))}
           </motion.div>
+          </div>
         </section>
 
         {/* ── STEPS ───────────────────────────────────── */}
-        <section className="relative bg-sand/30 px-6 pb-10 pt-8 md:pb-14 md:pt-12">
+        <section id="about" className="relative bg-sand/30 pb-10 pt-8 md:pb-14 md:pt-12">
+          <div className="mx-auto max-w-[1440px] px-6">
           <motion.div
             className="text-center"
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={VP}
@@ -486,62 +572,104 @@ export default function CoffeeStudiosPage() {
               </motion.div>
             ))}
           </motion.div>
+          </div>
+        </section>
+
+        {/* ── VIRTUAL TOUR TEASER ─────────────────────── */}
+        <section className="relative overflow-hidden bg-espresso py-28 md:py-36">
+          {/* Subtle noise texture */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.04] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E')]" />
+
+          {/* Floating polaroid preview cards */}
+          {[
+            { img: "/cafes/coffee-studios/tiles/0-1-entrance/preview.jpg",  label: "Entrance",  style: { top: "12%",    left: "4%"   }, rotate: -8,  delay: 0    },
+            { img: "/cafes/coffee-studios/tiles/1-3-rooftop/preview.jpg",   label: "Rooftop",   style: { top: "8%",     right: "5%"  }, rotate: 7,   delay: 0.12 },
+            { img: "/cafes/coffee-studios/tiles/3-5-kitchen/preview.jpg",   label: "Kitchen",   style: { bottom: "10%", left: "5%"   }, rotate: 5,   delay: 0.22 },
+            { img: "/cafes/coffee-studios/tiles/2-4-roof-room/preview.jpg", label: "Roof Room", style: { bottom: "8%",  right: "4%"  }, rotate: -6,  delay: 0.32 },
+          ].map(({ img, label, style, rotate, delay }) => (
+            <motion.div
+              key={label}
+              className="absolute hidden md:block w-40 lg:w-48 cursor-pointer"
+              style={{ ...style, rotate }}
+              initial={{ opacity: 0, scale: 0.7 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={VP}
+              transition={{ duration: 0.7, delay, ease: EASE }}
+              animate={{
+                y: [0, -10, 0],
+                rotate: [rotate, rotate + 3, rotate],
+              }}
+              whileHover={{ scale: 1.08, rotate: 0, zIndex: 20, transition: { duration: 0.2 } }}
+              onClick={() => setTourOpen(true)}
+            >
+              {/* Polaroid frame */}
+              <div className="rounded-xl bg-cream p-2 pb-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+                <div className="aspect-[4/3] overflow-hidden rounded-lg">
+                  <img src={img} alt={label} className="h-full w-full object-cover" loading="lazy" />
+                </div>
+                <p className="mt-2 text-center text-[10px] font-bold uppercase tracking-widest text-espresso/60">{label}</p>
+              </div>
+            </motion.div>
+          ))}
+
+          {/* Central CTA */}
+          <motion.div
+            className="relative z-10 mx-auto flex max-w-lg flex-col items-center px-6 text-center"
+            initial="hidden"
+            whileInView="visible"
+            viewport={VP}
+            variants={{ visible: { transition: { staggerChildren: 0.14 } } }}
+          >
+            <motion.p variants={fadeUp} className="text-[10px] font-bold uppercase tracking-[0.4em] text-amber-400">
+              Immersive 360° Experience
+            </motion.p>
+
+            <motion.h2
+              variants={fadeUp}
+              className="mt-3 font-display font-black leading-none tracking-tight text-cream"
+              style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)" }}
+            >
+              Step Inside<br />
+              <span className="text-amber-400">the Café</span>
+            </motion.h2>
+
+            <motion.p variants={fadeUp} className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-cream/60 md:text-base">
+              Explore every corner — espresso bar, rooftop, and kitchen — before you even arrive.
+            </motion.p>
+
+            <motion.button
+              variants={fadeUp}
+              onClick={() => setTourOpen(true)}
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.96 }}
+              className="group mt-8 flex items-center gap-3 rounded-full bg-amber-400 px-8 py-3.5 text-sm font-bold tracking-wide text-espresso shadow-[0_0_40px_rgba(251,191,36,0.25)] transition hover:bg-amber-300 hover:shadow-[0_0_60px_rgba(251,191,36,0.4)]"
+            >
+              <span>Enter 3D World</span>
+              <span className="grid h-6 w-6 place-items-center rounded-full bg-espresso/10 transition group-hover:translate-x-0.5">→</span>
+            </motion.button>
+
+            <motion.div
+              variants={fadeUp}
+              className="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[10px] uppercase tracking-widest text-cream/30"
+            >
+              {["Entrance", "Rooftop", "Kitchen", "Lounge"].map((r, i) => (
+                <span key={r} className="flex items-center gap-2">
+                  {i > 0 && <span className="h-px w-3 bg-cream/20" />}
+                  {r}
+                </span>
+              ))}
+            </motion.div>
+          </motion.div>
         </section>
 
         {/* ── REVIEWS ─────────────────────────────────── */}
-        <section className="relative bg-cream px-6 pb-14 pt-12">
-          <motion.img src={beansSmall} alt="" className="pointer-events-none absolute right-6 top-6 w-14 rotate-12 opacity-60" loading="lazy"
-            initial={{ opacity: 0 }} whileInView={{ opacity: 0.6 }} viewport={VP}
-          />
-          <motion.div
-            className="text-center"
-            variants={fadeUp} initial="hidden" whileInView="visible" viewport={VP}
-          >
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-mocha">Kind Words</span>
-            <h2 className="mt-2 font-display text-3xl font-bold text-espresso md:text-4xl lg:text-5xl">What our customers say</h2>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={VP}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            <Carousel opts={{ align: "start", loop: true }} className="mt-10">
-              <CarouselContent className="-ml-4">
-                {[
-                  { name: "Emma R.",    role: "Regular since 2022",  rating: 5, quote: "The flat white here ruined every other café for me. The latte art alone is worth the visit — but the flavor is what keeps me coming back." },
-                  { name: "Marcus T.", role: "Coffee enthusiast",    rating: 5, quote: "Finally a place that treats coffee like a craft. You can taste the difference single-origin Colombian beans make when they're roasted with care." },
-                  { name: "Sofía L.",  role: "Local writer",         rating: 5, quote: "Warm corner, warmer staff, the best Turkish coffee in the neighborhood. I write three chapters a week from the window seat." },
-                  { name: "Daniel K.", role: "Visited from Lisbon",  rating: 5, quote: "Stumbled in for an espresso and stayed for three. The barista walked me through every origin on the menu. A real coffee education." },
-                  { name: "Priya N.",  role: "Saturday regular",     rating: 4, quote: "Their cold brew is dangerously smooth and the pastries pair beautifully. My weekend ritual is officially booked here." },
-                  { name: "Owen B.",   role: "Remote designer",      rating: 5, quote: "Reliable Wi-Fi, quiet mornings, and the cappuccino is always perfect. It's basically my second studio at this point." },
-                ].map((r) => (
-                  <CarouselItem key={r.name} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                    <motion.div
-                      className="flex h-full flex-col rounded-2xl border border-espresso/15 bg-sand/30 p-6"
-                      whileHover={{ y: -4, boxShadow: "0 12px 40px rgba(59,32,25,0.1)", transition: { duration: 0.3 } }}
-                    >
-                      <div className="flex gap-0.5 text-mocha">
-                        {[...Array(5)].map((_, i) => <Star key={i} className={`h-3.5 w-3.5 ${i < r.rating ? "fill-current" : "fill-none text-mocha/30"}`} />)}
-                      </div>
-                      <p className="mt-3 flex-1 text-[13px] leading-relaxed text-espresso/85">"{r.quote}"</p>
-                      <div className="mt-4 border-t border-espresso/10 pt-3">
-                        <div className="text-sm font-bold text-espresso">{r.name}</div>
-                        <div className="text-[10px] uppercase tracking-wider text-espresso/60">{r.role}</div>
-                      </div>
-                    </motion.div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="-left-2 border-espresso/30 bg-cream text-espresso hover:bg-espresso hover:text-cream md:-left-4" />
-              <CarouselNext className="-right-2 border-espresso/30 bg-cream text-espresso hover:bg-espresso hover:text-cream md:-right-4" />
-            </Carousel>
-          </motion.div>
-        </section>
+        <div id="reviews">
+          <StaggerTestimonials />
+        </div>
 
         {/* ── CONTACT ─────────────────────────────────── */}
-        <section className="relative overflow-hidden bg-sand/40 px-6 pb-14 pt-12">
+        <section id="contact" className="relative overflow-hidden bg-sand/40 pb-14 pt-12">
+          <div className="mx-auto max-w-[1440px] px-6">
           <motion.img src={beansSmall} alt="" className="pointer-events-none absolute -left-4 top-4 w-16 -rotate-12 opacity-60" loading="lazy" initial={{ opacity: 0 }} whileInView={{ opacity: 0.6 }} viewport={VP} />
           <motion.img src={beansSmall} alt="" className="pointer-events-none absolute bottom-6 right-2 w-14 rotate-45 opacity-50" loading="lazy" initial={{ opacity: 0 }} whileInView={{ opacity: 0.5 }} viewport={VP} />
 
@@ -565,10 +693,10 @@ export default function CoffeeStudiosPage() {
                 <h3 className="mt-3 font-display text-2xl font-bold leading-tight text-cream md:text-3xl">Find us &<br />visit anytime</h3>
                 <ul className="mt-6 space-y-5">
                   {[
-                    { Icon: MapPin, label: "The Café",    value: "214 Roasters Lane, Old Town District" },
-                    { Icon: Clock,  label: "Brew Hours",  value: "Mon–Fri 7:00–19:00\nSat–Sun 8:00–20:00" },
-                    { Icon: Phone,  label: "Ring Us",     value: "+1 (415) 555-0142" },
-                    { Icon: Mail,   label: "Write Us",    value: "hello@artisanbean.co" },
+                    { Icon: MapPin, label: "The Café",   value: cafeConfig.address },
+                    { Icon: Clock,  label: "Brew Hours", value: cafeConfig.hours   },
+                    { Icon: Phone,  label: "Ring Us",    value: cafeConfig.phone   },
+                    { Icon: Mail,   label: "Write Us",   value: cafeConfig.email   },
                   ].map(({ Icon, label, value }) => (
                     <li key={label} className="flex items-start gap-3">
                       <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full border border-cream/25 bg-cream/5"><Icon className="h-4 w-4 text-cream" /></span>
@@ -635,18 +763,20 @@ export default function CoffeeStudiosPage() {
               </div>
             </motion.form>
           </div>
+          </div>
         </section>
 
         {/* ── FOOTER ──────────────────────────────────── */}
         <motion.footer
-          className="bg-espresso px-6 py-10 text-cream"
+          className="bg-espresso py-10 text-cream"
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={VP}
           transition={{ duration: 0.6 }}
         >
+          <div className="mx-auto max-w-[1440px] px-6">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
             <div className="md:col-span-2">
-              <div className="font-display text-2xl font-bold leading-tight">Artisan Bean<br />Coffee Co.</div>
-              <p className="mt-3 max-w-sm text-xs leading-relaxed text-cream/70">Hand-picked, slow-roasted, and brewed with care. Serving the neighborhood since 2019.</p>
+              <CafeLogo size={44} showName variant="light" />
+              <p className="mt-3 max-w-sm text-xs leading-relaxed text-cream/70">{cafeConfig.description}</p>
               <div className="mt-5 flex gap-3">
                 {[Instagram, Facebook, Twitter].map((Icon, i) => (
                   <motion.a key={i} href="#" whileHover={{ scale: 1.15 }} className="grid h-9 w-9 place-items-center rounded-full border border-cream/30 transition hover:bg-cream hover:text-espresso">
@@ -673,16 +803,18 @@ export default function CoffeeStudiosPage() {
             </div>
           </div>
           <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-cream/15 pt-5 text-[11px] text-cream/60 md:flex-row">
-            <div>© 2026 Artisan Bean Coffee Co. All rights reserved.</div>
+            <div>© {cafeConfig.copyright} All rights reserved.</div>
             <div className="flex gap-5">
               <a href="#" className="hover:text-cream">Privacy</a>
               <a href="#" className="hover:text-cream">Terms</a>
             </div>
           </div>
+          </div>
         </motion.footer>
       </div>
 
       <FullMenuDialog open={menuOpen} onOpenChange={setMenuOpen} />
+      {tourOpen && <TourModal open={tourOpen} onClose={() => setTourOpen(false)} />}
     </main>
   );
 }

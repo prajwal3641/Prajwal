@@ -1,3 +1,13 @@
+# Next.js
+.next/
+out/
+build/
+tsconfig.tsbuildinfo
+
+# Dependencies
+.pnp
+.pnp.js
+
 # Logs
 logs
 *.log
