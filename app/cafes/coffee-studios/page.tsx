@@ -115,6 +115,7 @@ const menuCategories = {
 
 type MenuCategory = keyof typeof menuCategories;
 
+/* ─── Coffee Machine Progress SVG ───────────────────── */
 /* ─── Page ────────────────────────────────────────── */
 export default function CoffeeStudiosPage() {
   const categoryNames = Object.keys(menuCategories) as MenuCategory[];
@@ -126,9 +127,9 @@ export default function CoffeeStudiosPage() {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  /* scroll-based nav frosted glass */
+  /* scroll-based nav frosted glass + coffee progress */
   const { scrollY } = useScroll();
-  const navBgOpacity = useTransform(scrollY, [0, 100], [0, 1]);
+  const navBgOpacity = useTransform(scrollY, [0, 100], [0, 0.7]);
 
   /* hero parallax */
   const heroRef = useRef<HTMLElement>(null);
@@ -137,12 +138,11 @@ export default function CoffeeStudiosPage() {
   const heroTextY = useTransform(heroP, [0, 1], ["0%", "12%"]);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-cream font-body text-espresso">
-      <div className="w-full">
+    <main className="min-h-screen bg-cream font-body text-espresso">
 
         {/* ── STICKY NAV ──────────────────────────────── */}
         <div className="sticky top-0 z-50">
-          <div className="absolute inset-0 bg-cream/95 backdrop-blur-md border-b border-espresso/10" />
+          <motion.div className="absolute inset-0 bg-cream/95 backdrop-blur-md border-b border-espresso/10" style={{ opacity: navBgOpacity }} />
           <nav className="relative z-10 mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3">
             {/* Logo */}
             <motion.div
@@ -179,7 +179,7 @@ export default function CoffeeStudiosPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="hidden items-center gap-2 md:flex"
+              className="hidden items-center gap-3 md:flex"
             >
               <motion.button
                 onClick={() => setTourOpen(true)}
@@ -248,6 +248,7 @@ export default function CoffeeStudiosPage() {
           </motion.div>
         </div>
 
+      <div className="overflow-x-hidden">
         {/* ── HERO ────────────────────────────────────── */}
         <section ref={heroRef} className="relative bg-sand/40 pb-12 pt-8">
           <motion.img
@@ -816,5 +817,6 @@ export default function CoffeeStudiosPage() {
       <FullMenuDialog open={menuOpen} onOpenChange={setMenuOpen} />
       {tourOpen && <TourModal open={tourOpen} onClose={() => setTourOpen(false)} />}
     </main>
+
   );
 }
